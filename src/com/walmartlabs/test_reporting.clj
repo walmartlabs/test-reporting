@@ -43,7 +43,7 @@ when a test failure or error occurs."
   This adds keys to the [[*reporting-context*]].
   After executing the forms, a check is made to see if
   the number of errors or failures changed; if so
-  then the reporting context is pretty-printed to *out*.
+  then the reporting context is pretty-printed to `*out*`.
 
   The data maybe a symbol: The unevaluated symbol becomes
   the key, and the evaluated symbol is the value.
@@ -68,9 +68,10 @@ when a test failure or error occurs."
 
       (reporting {'request request 'response response} ...)
 
-  Nested usages of reporting is allowed; the context is
-  reported at the _end_ of the block and a reasonable attempt
-  is made to prevent the context from being printed multiple times."
+  Nested usages of reporting is allowed; a reasonable attempt
+  is made to prevent the context from being printed multiple times when there
+  are multiple failures. Typically, the context is only printed once, at the
+  deepest nested block in which test failures occur."
   [data & forms]
   (cond
 
