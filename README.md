@@ -1,6 +1,10 @@
 # com.walmartlabs/test-reporting
 
-Supplements clojure.test/is by pretty-printing some context when a test fails.
+Supplements `clojure.test/is` by pretty-printing some context when a test fails.
+
+[![Clojars Project](https://img.shields.io/clojars/v/com.walmartlabs/test-reporting.svg)](https://clojars.org/com.walmartlabs/test-reporting)
+
+[API Documentation](http://walmartlabs.github.io/test-reporting/)
 
 ## Usage
 
