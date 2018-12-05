@@ -4,7 +4,7 @@ Supplements `clojure.test/is` by pretty-printing some context when a test fails.
 
 [![Clojars Project](https://img.shields.io/clojars/v/com.walmartlabs/test-reporting.svg)](https://clojars.org/com.walmartlabs/test-reporting)
 
-[API Documentation](http://walmartlabs.github.io/test-reporting/)
+[API Documentation](http://walmartlabs.github.io/apidocs/test-reporting/)
 
 ## Usage
 
@@ -30,7 +30,7 @@ expected: (= 200 (:status response))
 ```
 
 
-See the full API: the first form to reporting may be a single symbol, a map, or a vector of symbols.
+See the full API: the first form to `reporting` may be a single symbol, a map, or a vector of symbols.
 
 ## License
 
