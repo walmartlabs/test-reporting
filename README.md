@@ -11,8 +11,8 @@ Supplements `clojure.test/is` by pretty-printing some context when a test fails.
 test-reporting adds a single macro, `reporting`, that can be integrated into
 your tests:
 
-```
-(require '[com.walmartlabs.test-reporting :refer [reporting])
+```clj
+(require '[com.walmartlabs.test-reporting :refer [reporting]])
 
 (let [response (get-response)]
   (reporting response
