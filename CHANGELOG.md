@@ -2,7 +2,7 @@
 
 Use the :error key (not the :errors key).
 
-Added deps.edn
+Added deps.edn.
 
 ## 1.0.0 - 5 Jun 2020
 
