@@ -1,3 +1,17 @@
+; Copyright (c) 2017-present Walmart, Inc.
+;
+; Licensed under the Apache License, Version 2.0 (the "License")
+; you may not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+;
+;     http://www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an "AS IS" BASIS,
+; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+
 (ns com.walmartlabs.test-reporting
   "An extension for clojure.test that allows additional context to be output only
 when a test failure or error occurs."
@@ -24,11 +38,11 @@ when a test failure or error occurs."
   (atom false))
 
 (defn snapshot-counters
-  "Returns just the :fail and :errors keys from the `*report-counters*` var.
+  "Returns just the :fail and :error keys from the `*report-counters*` var.
   A change to either of these values indicates a test failure, triggering the
   reporting of context."
   []
-  (select-keys @*report-counters* [:fail :errors]))
+  (select-keys @*report-counters* [:fail :error]))
 
 (defn report-context
   []

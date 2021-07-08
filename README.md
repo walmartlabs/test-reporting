@@ -34,7 +34,7 @@ See the full API: the first form to `reporting` may be a single symbol, a map, o
 
 ## License
 
-Copyright © 2017 Walmart
+Copyright © 2017-Present Walmart
 
 Distributed under the Apache Software License 2.0.
 
