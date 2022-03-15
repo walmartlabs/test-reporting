@@ -16,8 +16,10 @@
   "An extension for clojure.test that allows additional context to be output only
 when a test failure or error occurs."
   (:require
-    [clojure.test :refer [*report-counters* *initial-report-counters*]]
-    [clojure.pprint :as pprint]))
+    #?(:clj  [clojure.test :refer [*report-counters* *initial-report-counters*]]
+       :cljs [cljs.test :refer [get-current-env]])
+    [#?(:clj clojure.pprint
+        :cljs cljs.pprint) :as pprint]))
 
 (defn ^:private pretty-print
   "Pretty-prints the supplied object to a returned string."
@@ -38,11 +40,15 @@ when a test failure or error occurs."
   (atom false))
 
 (defn snapshot-counters
-  "Returns just the :fail and :error keys from the `*report-counters*` var.
+  "Returns just the :fail and :error keys from the `*report-counters*` var
+  (or the :report-counters key of the cljs.test environment).
   A change to either of these values indicates a test failure, triggering the
   reporting of context."
   []
-  (select-keys @*report-counters* [:fail :error]))
+  (select-keys
+    #?(:clj *report-counters*
+       :cljs (:report-counter (get-current-env)))
+    [:fail :error]))
 
 (defn report-context
   []
@@ -100,27 +106,29 @@ when a test failure or error occurs."
                     {:data data :forms forms}))
 
     :else
-    `(binding [*report-counters* (or *report-counters*
-                                     (ref *initial-report-counters*))
-               *reporting-context* (merge *reporting-context* ~data)]
-       (let [counters# (snapshot-counters)]
-         (try
-           ;; New values have been bound into *reporting-context* that need
-           ;; to be reported on a failure or error.
-           (reset! *reported? false)
-           ~@forms
-           (finally
-             (when (and (not @*reported?)
-                        (not= counters# (snapshot-counters)))
-               ;; Don't do further reporting while unwinding, and don't
-               ;; try to report the context a second time if there's an exception
-               ;; the first time. It is expected that some of the context values
-               ;; will be quite large, so we want to ensure that they are not
-               ;; pretty-printed multiple times.
-               (reset! *reported? true)
-               ;; The point here is to call report-context at the deepest level,
-               ;; so all the keys can appear together. Looks better (due to
-               ;; indentation rules). However, it would be a lot simpler to just
-               ;; let each reporting block track its own keys/values in a local
-               ;; symbol.
-               (report-context))))))))
+    (let [body `(binding [*reporting-context* (merge *reporting-context* ~data)]
+                  (let [counters# (snapshot-counters)]
+                    (try
+                      ;; New values have been bound into *reporting-context* that need
+                      ;; to be reported on a failure or error.
+                      (reset! *reported? false)
+                      ~@forms
+                      (finally
+                        (when (and (not @*reported?)
+                                   (not= counters# (snapshot-counters)))
+                          ;; Don't do further reporting while unwinding, and don't
+                          ;; try to report the context a second time if there's an exception
+                          ;; the first time. It is expected that some of the context values
+                          ;; will be quite large, so we want to ensure that they are not
+                          ;; pretty-printed multiple times.
+                          (reset! *reported? true)
+                          ;; The point here is to call report-context at the deepest level,
+                          ;; so all the keys can appear together. Looks better (due to
+                          ;; indentation rules). However, it would be a lot simpler to just
+                          ;; let each reporting block track its own keys/values in a local
+                          ;; symbol.
+                          (report-context))))))]
+      #?(:clj  `(binding [*report-counters* (or *report-counters*
+                                                (ref *initial-report-counters*))]
+                  ~body)
+         :cljs body))))

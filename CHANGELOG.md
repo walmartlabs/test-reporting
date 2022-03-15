@@ -1,3 +1,7 @@
+## 1.2 - 15 May 2021
+
+Convert the library to a .cljc file.
+
 ## 1.1 - 8 Jul 2021
 
 Use the :error key (not the :errors key).
