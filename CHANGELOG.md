@@ -1,4 +1,4 @@
-## 1.2 - 15 May 2021
+## 1.2 - 16 May 2021
 
 Convert the library to a .cljc file.
 
