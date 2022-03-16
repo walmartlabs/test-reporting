@@ -17,9 +17,8 @@
 when a test failure or error occurs."
   (:require
     #?(:clj  [clojure.test :refer [*report-counters* *initial-report-counters*]]
-       :cljs [cljs.test :refer [get-current-env]])
-    [#?(:clj clojure.pprint
-        :cljs cljs.pprint) :as pprint]))
+       :cljs [clojure.test :refer [get-current-env]])
+    [clojure.pprint :as pprint]))
 
 (defn ^:private pretty-print
   "Pretty-prints the supplied object to a returned string."
@@ -46,14 +45,24 @@ when a test failure or error occurs."
   reporting of context."
   []
   (select-keys
-    #?(:clj *report-counters*
-       :cljs (:report-counter (get-current-env)))
+    #?(:clj  @*report-counters*
+       :cljs (:report-counters (get-current-env)))
     [:fail :error]))
 
 (defn report-context
   []
   (when *reporting-context*
     (println " context:\n" (pretty-print *reporting-context*))))
+
+(defmacro ^:private mcase
+  "A macro to provide a reader-conditional-like functionality inside of a macro definition.
+  This was retrieved from https://github.com/cgrand/macrovich/blob/master/src/net/cgrand/macrovich.cljc"
+  [& {:keys [cljs clj]}]
+  (if (contains? &env '&env)
+    `(if (:ns ~'&env) ~cljs ~clj)
+    (if #?(:clj (:ns &env) :cljs true)
+      cljs
+      clj)))
 
 (defmacro reporting
   "Establishes a context in which certain data is printed
@@ -128,7 +137,7 @@ when a test failure or error occurs."
                           ;; let each reporting block track its own keys/values in a local
                           ;; symbol.
                           (report-context))))))]
-      #?(:clj  `(binding [*report-counters* (or *report-counters*
-                                                (ref *initial-report-counters*))]
-                  ~body)
-         :cljs body))))
+      (mcase :clj `(binding [*report-counters* (or *report-counters*
+                                                   (ref *initial-report-counters*))]
+                     ~body)
+             :cljs body))))
